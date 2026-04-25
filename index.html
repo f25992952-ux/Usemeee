@@ -2801,8 +2801,19 @@ if (bestScore > 0.55 && bestIntent) {
     return generateIdeaReply();
   }
   if (bestIntent.tag === 'stock_lookup') {
-    setTimeout(() => showStockModal(), 1000);
-    return bestIntent.responses[Math.floor(Math.random() * bestIntent.responses.length)];
+    // Extract stock symbol from input (e.g., "AAPL stock" -> "AAPL")
+    const symbolMatch = userInput.match(/\b[A-Z]{1,5}\b/);
+    if (symbolMatch) {
+      setTimeout(() => {
+        showStockModal();
+        document.getElementById('stockSymbol').value = symbolMatch[0];
+        getStockData();
+      }, 1000);
+      return `Fetching stock data for ${symbolMatch[0]}...`;
+    } else {
+      setTimeout(() => showStockModal(), 1000);
+      return bestIntent.responses[Math.floor(Math.random() * bestIntent.responses.length)];
+    }
   }
   return bestIntent.responses[Math.floor(Math.random() * bestIntent.responses.length)];
 }
